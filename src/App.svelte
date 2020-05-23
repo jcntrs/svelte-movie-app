@@ -59,7 +59,11 @@
     <div class="row">
       {#each movies as movie}
         <div class="col-12 col-md-6 col-lg-3 p-2">
-          <Item />
+          <Item
+            id={movie.id}
+            title={movie.title}
+            overview={movie.overview}
+            posterPath={movie.poster_path} />
         </div>
       {/each}
     </div>
