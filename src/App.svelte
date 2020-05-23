@@ -27,6 +27,22 @@
     console.log("the component has mounted");
     getMovies();
   }); */
+
+  let favorites = [];
+
+  const handleClick = event => {
+    const movie = event.detail;
+    let index = favorites.findIndex(element => element.id === movie.id);
+
+    if (index >= 0) {
+      favorites.splice(index, 1);
+    } else {
+      favorites.push(movie);
+    }
+
+    favorites = favorites;
+    console.log(favorites);
+  };
 </script>
 
 <style>
@@ -56,7 +72,9 @@
 <main>
   <div class="container">
     <div class="row">
-      <!-- {#each movies as movie}
+      <div class="col-12 col-md-6 col-lg-8">
+        <h1>Peliculas Populares</h1>
+        <!-- {#each movies as movie}
         <div class="col-12 col-md-6 col-lg-3 p-2">
           <Item
             id={movie.id}
@@ -65,20 +83,47 @@
             posterPath={movie.poster_path} />
         </div>
       {/each} -->
-      {#await getMovies}
-        <!-- promise is pending -->
-        <p>Cargando información...</p>
-      {:then data}
-        {#each data.results as movie}
-          <div class="col-12 col-md-6 col-lg-3 p-2">
-            <Item
-              id={movie.id}
-              title={movie.title}
-              overview={movie.overview}
-              posterPath={movie.poster_path} />
-          </div>
-        {/each}
-      {/await}
+        <div class="row">
+          {#await getMovies}
+            <!-- promise is pending -->
+            <div class="col-12">
+              <p>Cargando información...</p>
+            </div>
+          {:then data}
+            {#each data.results as movie}
+              <div class="col-12 col-md-6 col-lg-4 p-2">
+                <Item
+                  id={movie.id}
+                  title={movie.title}
+                  overview={movie.overview}
+                  posterPath={movie.poster_path}
+                  on:onHandleClickLike={handleClick} />
+              </div>
+            {/each}
+          {/await}
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <h2>Peliculas Favoritas</h2>
+        <div class="row">
+          {#if favorites.length}
+            {#each favorites as movie}
+              <div class="col-12 col-md-6 col-lg-4 p-2">
+                <Item
+                  id={movie.id}
+                  title={movie.title}
+                  overview=""
+                  posterPath={movie.poster_path}
+                  on:onHandleClickLike={handleClick} />
+              </div>
+            {/each}
+          {:else}
+            <div class="col-12">
+              <p>No hay peliculas favoritas</p>
+            </div>
+          {/if}
+        </div>
+      </div>
     </div>
   </div>
 </main>
