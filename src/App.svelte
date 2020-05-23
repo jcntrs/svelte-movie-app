@@ -1,5 +1,6 @@
 <script>
   /* import { onMount } from "svelte"; */
+  import { fly } from "svelte/transition";
   import Item from "./movie/Item.svelte";
 
   const APIKEY = "00d23a7ba8835c665646fd7a63645408";
@@ -43,12 +44,22 @@
     favorites = favorites;
     console.log(favorites);
   };
+
+  $: like = id => {
+    let index = favorites.findIndex(element => element.id === id);
+    return index >= 0;
+  };
 </script>
 
 <style>
+  .panel {
+    height: 90vh;
+    overflow: auto;
+  }
+
   main {
     text-align: center;
-    padding: 1em;
+    padding: 0;
     max-width: 240px;
     margin: 0 auto;
   }
@@ -72,7 +83,7 @@
 <main>
   <div class="container">
     <div class="row">
-      <div class="col-12 col-md-6 col-lg-8">
+      <div class="col-12 col-md-6 col-lg-8 border panel">
         <h1>Peliculas Populares</h1>
         <!-- {#each movies as movie}
         <div class="col-12 col-md-6 col-lg-3 p-2">
@@ -97,24 +108,29 @@
                   title={movie.title}
                   overview={movie.overview}
                   posterPath={movie.poster_path}
-                  on:onHandleClickLike={handleClick} />
+                  on:onHandleClickLike={handleClick}
+                  like={like(movie.id)} />
               </div>
             {/each}
           {/await}
         </div>
       </div>
-      <div class="col-12 col-md-6 col-lg-4">
+      <div class="col-12 col-md-6 col-lg-4 border panel">
         <h2>Peliculas Favoritas</h2>
         <div class="row">
           {#if favorites.length}
-            {#each favorites as movie}
-              <div class="col-12 col-md-6 col-lg-4 p-2">
+            {#each favorites as movie, i (movie.id)}
+              <div
+                in:fly={{ duration: 500, y: 20 }}
+                out:fly={{ duration: 500, y: -20 }}
+                class="col-12 col-md-6 col-lg-4 p-2">
                 <Item
                   id={movie.id}
                   title={movie.title}
                   overview=""
-                  posterPath={movie.poster_path}
-                  on:onHandleClickLike={handleClick} />
+                  posterPath={movie.posterPath}
+                  on:onHandleClickLike={handleClick}
+                  like={like(movie.id)} />
               </div>
             {/each}
           {:else}

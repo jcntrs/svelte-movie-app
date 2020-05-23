@@ -4,6 +4,7 @@
   export let title;
   export let overview;
   export let posterPath;
+  export let like;
 
   $: coverURL = `https://image.tmdb.org/t/p/w185_and_h278_bestv2${posterPath}`;
 
@@ -20,7 +21,11 @@
     <h5 class="card-title">{title}</h5>
     <p class="card-text">{overview}</p>
     <div class="text-center">
-      <button class="btn btn-primary" on:click={handleClickLike}>Like</button>
+      <button
+        class={like ? 'btn btn-danger' : 'btn btn-primary'}
+        on:click={handleClickLike}>
+        {like ? 'Quitar' : 'Añadir'}
+      </button>
     </div>
   </div>
 </div>
