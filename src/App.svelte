@@ -1,12 +1,12 @@
 <script>
-  import { onMount } from "svelte";
+  /* import { onMount } from "svelte"; */
   import Item from "./movie/Item.svelte";
 
   const APIKEY = "00d23a7ba8835c665646fd7a63645408";
   const BASEURL = "https://api.themoviedb.org/3";
   const APISETTINGS = `?api_key=${APIKEY}&language=es-ES`;
 
-  let movies = [];
+  /* let movies = [];
 
   function getMovies() {
     const URL = `${BASEURL}/discover/movie${APISETTINGS}&sort_by=popularity.desc`;
@@ -15,12 +15,18 @@
       .then(({ results }) => {
         movies = results;
       });
-  }
+  } */
 
-  onMount(() => {
+  const getMovies = (async () => {
+    const URL = `${BASEURL}/discover/movie${APISETTINGS}&sort_by=popularity.desc`;
+    const response = await fetch(URL);
+    return await response.json();
+  })();
+
+  /* onMount(() => {
     console.log("the component has mounted");
     getMovies();
-  });
+  }); */
 </script>
 
 <style>
@@ -30,13 +36,6 @@
     max-width: 240px;
     margin: 0 auto;
   }
-
-  /*   h1 {
-    color: #ff3e00;
-    text-transform: uppercase;
-    font-size: 4em;
-    font-weight: 100;
-  } */
 
   @media (min-width: 640px) {
     main {
@@ -57,7 +56,7 @@
 <main>
   <div class="container">
     <div class="row">
-      {#each movies as movie}
+      <!-- {#each movies as movie}
         <div class="col-12 col-md-6 col-lg-3 p-2">
           <Item
             id={movie.id}
@@ -65,7 +64,21 @@
             overview={movie.overview}
             posterPath={movie.poster_path} />
         </div>
-      {/each}
+      {/each} -->
+      {#await getMovies}
+        <!-- promise is pending -->
+        <p>Cargando información...</p>
+      {:then data}
+        {#each data.results as movie}
+          <div class="col-12 col-md-6 col-lg-3 p-2">
+            <Item
+              id={movie.id}
+              title={movie.title}
+              overview={movie.overview}
+              posterPath={movie.poster_path} />
+          </div>
+        {/each}
+      {/await}
     </div>
   </div>
 </main>
